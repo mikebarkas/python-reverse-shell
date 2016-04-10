@@ -12,7 +12,7 @@ def socket_create():
         s = socket.socket()
 
     except socket.error as e:
-        print 'Error creating socket: ' + str(e)
+        print('Error creating socket: ' + str(e))
 
 
 def socket_bind():
@@ -21,19 +21,19 @@ def socket_bind():
         global port
         global s
 
-        print'Binding socket and port: ' + str(port)
+        print('Binding socket and port: ' + str(port))
         s.bind((host, port))
         s.listen(3)
 
     except socket.error as e:
-        print 'Binding socket error: ' + str(e)
-        print 'Retrying..'
+        print('Binding socket error: ' + str(e))
+        print('Retrying..')
         socket_bind()
 
 
 def socket_accept():
     conn, address = s.accept()
-    print 'Connection created: ' + address[0] + ' : ' + str(address[1])
+    print('Connection created: ' + address[0] + ' : ' + str(address[1]))
     send_commands(conn)
     conn.close()
 
@@ -42,15 +42,15 @@ def send_commands(conn):
     while True:
         cmd = input()
 
-        if cmd == 'quit':
-            conn.close()
-            s.close()
-            sys.exit()
-
         if len(str.encode(cmd)) > 0:
-            conn.send(str.encode(cmd))
-            client_response = str(conn.recv(1024))
-            print client_response
+            if cmd == 'quit':
+                conn.close()
+                s.close()
+                sys.exit()
+            else:
+                conn.send(str.encode(cmd))
+                client_response = str(conn.recv(1024), 'utf-8')
+                print(client_response, end='')
 
 
 def main():
